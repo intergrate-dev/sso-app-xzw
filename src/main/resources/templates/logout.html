@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>跳转返回</title>
+</head>
+<body>
+	正在跳转，请稍等……
+
+	<div th:each="subsystem : ${subsystemList}" th:if="${subsystemList} ne null">
+		<iframe th:src="@{${subsystem.logoutUrl}}"
+			style="display: none; width: 0px; height: 0px;"></iframe>
+	</div>
+	<div id="block_hint" style="visibility: hidden">
+		如果您看到这个页面，说明您的网速缓慢或者浏览器阻止了跳转。<br /> 请您点击<a href='[[${toPage}]]'><strong>
+				<font color="red">这里</font>
+		</strong></a>继续。
+	</div>
+</body>
+  
+	<script th:inline="javascript">
+	var toPage = [[${toPage}]];
+	/*<![CDATA[*/
+	var iframes = document.getElementsByTagName("iframe");
+	var completeIframes = 0;
+	var a = iframes.length;
+	for(var i=0;i<a;i++){
+		if(iframes[i].attachEvent){
+			iframes[i].attachEvent("onload", function(){ 
+				onComplete();
+			}); 
+		}else{
+			iframes[i].onload= function(){ 
+				onComplete();
+			}; 
+		}
+		iframes[i].onerror= function(){ 
+			onComplete();
+		}; 
+	}
+	
+	function onComplete(){
+		++completeIframes;
+		if(completeIframes == a){
+			location.replace(toPage);
+			setTimeout(function() {
+				document.getElementById("block_hint").style.visibility = 'visible';
+			}, 1000);
+		}
+	}
+	
+	setTimeout(function() {
+		document.getElementById("block_hint").style.visibility = 'visible';
+	}, 2000);
+	/*]]>*/
+	</script>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>SSO-APP接口测试</title>
+<style>
+hr {
+	width:50%;
+	color: #F00;
+}
+.title {
+	font-weight:800;
+}
+input[type=text] {
+	width:280px;
+}
+input[type=file] {
+	width:284px;
+}
+p,pre {
+	font-size:12px;
+	color:#060;
+}
+</style>
+</head>
+
+<body>
+<!-- 说明和初始化-->
+<table width="400" border="0" cellspacing="0" cellpadding="0" align="center">
+  <tr>
+    <td colspan=2 class="title">说明和初始化Header属性</td>
+  </tr>
+  <tr>
+    <td colspan=2><p>1.sso-app请求防盗刷的机制是根据请求参数和header属性加密校验。首先在客户端设置请求header里devid\version\timestamp\token\random五个属性，这五个属性字母表顺序排序拼接MD5加密一次，</p>
+      <p>2.五个属性加密后作为一个secret参数拼到请求参数（如手机号、密码）字母表顺序排序之后再次MD5加密，形成header里一个program-sign属性。请求参数名字列表字典排序构成program-params参数。</p>
+      <p>3.服务器端根据program-params获取参数值，并根据header属性按同样的方法运算一遍，和header里参数program-sign做对比，一致认为是合法的，不一致认为是非法请求。</p></td>
+  </tr>
+  <tr>
+    <td>devid</td>
+    <td><input type="text" name="devid" id="devidInit" value="41C3AB17-824D-4073-8121-53CA3122B0E4"/>
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td width="100">version</td>
+    <td><input type="text" name="version" id="versionInit" value="1.0.0" />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td>timestamp</td>
+    <td><input type="text" name="timestamp" id="timestampInit" value="1473219040809" />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td>token</td>
+    <td><input type="text" name="token" id="tokenInit" disabled="disabled" value="token"/>
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td>random</td>
+    <td><input type="text" name="random" id="randomInit"  value="3264720759"/>
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>sso-app API地址</td>
+    <td><input type="text" name="contextUrl" id="contextUrlInit"  value="" style="width:220px;" />
+      <span style="color:red;font-size:12px;">*注意端口、项目名</span></td>
+  </tr>
+  <tr>
+    <td>内网 API地址</td>
+    <td><input type="text" name="contextUrl" id="innerApiUrl"  value="http://172.19.57.45:8088/app_if/" style="width:220px;" />
+      <span style="color:red;font-size:12px;">*注意端口、项目名</span></td>
+  </tr>
+  <tr>
+    <td colspan=2><input type="button" name="init" id="init" value="初始化" /></td>
+  </tr>
+</table>
+<hr />
+<!-- 注册接口-->
+<table width="400" border="0" cellspacing="0" cellpadding="0" align="center">
+  <tr>
+    <td colspan=2 class="title">1. 注册</td>
+  </tr>
+  <tr>
+    <td width="100">username</td>
+    <td><input type="text" name="username" id="usernameRegister" />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td width="100">nickname</td>
+    <td><input type="text" name="nickname" id="nicknameRegister" />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <!--<tr>
+    <td>phone</td>
+    <td><input type="text" name="phone" id="phoneRegister" />
+      <span style="color:red;">*</span></td>
+  </tr>-->
+    <tr>
+        <td>email</td>
+        <td><input type="text" name="email" id="emailRegister" />
+            <span style="color:red;">*</span></td>
+    </tr>
+  <tr>
+    <td>password</td>
+    <td><input type="text" name="password" id="passwordRegister" />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td>siteid</td>
+    <td><input type="text" name="siteid" id="siteidRegister" valu="1" />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td colspan=2><input type="button" name="register" id="register" value="测试" /></td>
+  </tr>
+  <tr>
+    <td colspan=2><pre id="registerResult" style="margin:auto;">结果在这里...</pre></td>
+  </tr>
+</table>
+
+<!-- 手机登录接口-->
+<!--<hr />
+<table width="400" border="0" cellspacing="0" cellpadding="0" align="center">
+  <tr>
+    <td colspan=2  class="title">2.1 手机登录</td>
+  </tr>
+  <tr>
+    <td width="100">phone</td>
+    <td><input type="text" name="phone" id="phoneLogin"  />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td>password</td>
+    <td><input type="text" name="password" id="passwordLogin"  />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td colspan=2><input type="button" name="login" id="login" value="测试" /></td>
+  </tr>
+  <tr>
+    <td colspan=2><pre id="loginResult" style="margin:auto;width:400px;">结果在这里...</pre></td>
+  </tr>
+</table>-->
+
+<!-- 邮箱登录接口-->
+<hr />
+<table width="400" border="0" cellspacing="0" cellpadding="0" align="center">
+  <tr>
+    <td colspan=2  class="title">2.1 邮箱登录</td>
+  </tr>
+  <tr>
+    <td width="100">email</td>
+    <td><input type="text" name="email" id="emailLogin"  />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td>password</td>
+    <td><input type="text" name="password" id="passwordLoginByEamil"  />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td colspan=2><input type="button" name="loginByEmail" id="loginByEmail" value="测试" /></td>
+  </tr>
+  <tr>
+    <td colspan=2><pre id="loginByEmailResult" style="margin:auto;width:400px;">结果在这里...</pre></td>
+  </tr>
+</table>
+
+<!-- 用户名登录接口-->
+<!--<hr />
+<table width="400" border="0" cellspacing="0" cellpadding="0" align="center">
+  <tr>
+    <td colspan=2  class="title">2.1 用户名登录</td>
+  </tr>
+  <tr>
+    <td width="100">username</td>
+    <td><input type="text" name="username" id="usernameLogin"  />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td>password</td>
+    <td><input type="text" name="password" id="passwordLoginByUsername"  />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td colspan=2><input type="button" name="loginByUsername" id="loginByUsername" value="测试" /></td>
+  </tr>
+  <tr>
+    <td colspan=2><pre id="loginByUsernameResult" style="margin:auto;width:400px;">结果在这里...</pre></td>
+  </tr>
+</table>-->
+
+<!-- 第三方登录接口-->
+<!--<hr />
+<table width="400" border="0" cellspacing="0" cellpadding="0" align="center">
+  <tr>
+    <td colspan=2  class="title">2.3 第三方登录</td>
+  </tr>
+  <tr>
+    <td width="100">provider</td>
+    <td>
+        <select id="provider">
+		    <option value="tencent_QQ">tencent_QQ</option>
+		    <option value="sina_weibo">sina_weibo</option>
+		    <option value="tencent_wechat">tencent_wechat</option>
+		</select> 
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td>oid</td>
+    <td><input type="text" name="oid" id="oid"  />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td>nickname</td>
+    <td><input type="text" name="nickname1" id="nickname1"  />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td colspan=2><input type="button" name="loginByOther" id="loginByOther" value="测试" /></td>
+  </tr>
+  <tr>
+    <td colspan=2><pre id="loginByOtherResult" style="margin:auto;width:400px;">结果在这里...</pre></td>
+  </tr>
+</table>-->
+
+<!-- 上传头像接口-->
+<hr />
+<form id="uploadForm" method="post" action="http://172.19.57.45:8088/app_if/amuc/api/member/uploadImage" enctype="multipart/form-data">
+<table width="400" border="0" cellspacing="0" cellpadding="0" align="center">
+  <tr>
+    <td colspan=2  class="title">3. 上传头像和显示</td>
+  </tr>
+  <tr>
+    <td width="100">uid</td>
+    <td><input type="text" name="uid" id="uidUpload" value="" />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td width="100">选择图片</td>
+    <td><input type="file" name="data" id="data"  />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <!--<tr>
+    <td colspan=2><input type="button" name="upload" id="upload" value="测试" /></td>
+  </tr>-->
+  <tr>
+    <td colspan=2><input type="submit" name="upload" id="upload" value="测试" /></td>
+  </tr>
+</table>
+<div style="width:400px;margin:auto;"><pre id="uploadResult" style="margin:auto;">结果在这里...</pre></div>
+<br/>
+<div style="width:400px;margin:auto;">
+<pre id="uploadResult" style="margin:auto;">
+ 有问题，请检查下边几项：
+ 1.systemConfig.cfg文件中"头像存储地址"配置到sso-app的tomcat webapps目录；
+ 2.上传一个头像后，检查1中目录是否有文件生成；
+ 3.通过systemConfig.cfg中application是否能访问到图片,去掉${context}
+</pre>
+</div>
+</form>
+<!-- 退出接口-->
+<hr />
+<table width="400" border="0" cellspacing="0" cellpadding="0" align="center">
+  <tr>
+    <td colspan=2  class="title">4. 退出</td>
+  </tr>
+  <tr>
+    <td width="100">uid</td>
+    <td><input type="text" name="uid" id="uidLogout"  />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td>token</td>
+    <td><input type="text" name="token" id="tokenLogout"  />
+      <span style="color:red;">*</span></td>
+  </tr>
+  <tr>
+    <td colspan=2><input type="button" name="exit" id="exit" value="测试" /></td>
+  </tr>
+  <tr>
+    <td colspan=2><pre id="exitResult" style="margin:auto;">结果在这里...</pre></td>
+  </tr>
+</table>
+<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script> 
+<script type="text/javascript" src="js/jquery.md5.js" ></script> 
+<script type="text/javascript" src="js/ssoAppInterfaceTest.js" ></script>
+</body>
+</html>

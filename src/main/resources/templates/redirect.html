@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>正在跳转</title>
+</head>
+<body th:inline="text">
+	正在登录，请稍等……
+
+	<div id="block_hint" style="visibility: hidden">
+		如果您看到这个页面，说明您的网速缓慢或者浏览器阻止了跳转。<br /> 
+		请您点击<a href='[[${toPage}]]'><strong>
+		<font color="red">这里</font></strong></a>继续。
+	</div>
+	<script  th:inline="javascript">
+		var toPage = [[${toPage}]];
+		location.replace(toPage)
+		setTimeout(function() {
+			document.getElementById("block_hint").style.visibility = 'visible';
+		}, 2000);
+	</script>
+</body>
+</html>
